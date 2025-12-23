@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My News Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .category-section {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-transform: capitalize;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+
+        .article {
+            margin-bottom: 15px;
+        }
+
+            .article a {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                font-size: 0.9rem;
+            }
+
+                .article a:hover {
+                    color: #007bff;
+                }
+
+            .article p {
+                font-size: 0.8rem;
+                color: #666;
+                margin: 5px 0;
+            }
+    </style>
+</head>
+<body>
+
+    <h1>Global News Dashboard</h1>
+    <div id="dashboard" class="dashboard"></div>
+
+    <script>
+        const API_KEY = '3d2779393a844405aab063cb2a2b0119'; // Replace with your actual API Key
+        const categories = ['technology', 'business', 'entertainment', 'science', 'health', 'sports'];
+        // Note: NewsAPI.org standard categories are slightly different than your list.
+        // For custom topics like "AI" or "Fashion", you can use the 'q' (query) parameter instead.
+
+        async function fetchNews(category) {
+            // Using 'category' for standard groups or 'q' for specific ones like AI/Fashion
+            const url = `https://newsapi.org/v2/top-headlines?category=${category}&pageSize=4&country=us&apiKey=${API_KEY}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                renderCategory(category, data.articles);
+            } catch (error) {
+                console.error("Error fetching news:", error);
+            }
+        }
+
+        function renderCategory(category, articles) {
+            const dashboard = document.getElementById('dashboard');
+            const section = document.createElement('div');
+            section.className = 'category-section';
+
+            let articlesHtml = articles.map(art => `
+                <div class="article">
+                    <a href="${art.url}" target="_blank">${art.title}</a>
+                    <p>${art.source.name}</p>
+                </div>
+            `).join('');
+
+            section.innerHTML = `<h2>${category}</h2>${articlesHtml}`;
+            dashboard.appendChild(section);
+        }
+
+        // Initialize fetching for all categories
+        categories.forEach(cat => fetchNews(cat));
+    </script>
+</body>
+</html>
